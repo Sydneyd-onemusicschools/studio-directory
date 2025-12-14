@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Studio Directory</title>
+    <title>Studio Info - Admin Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -11,41 +11,263 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
+        :root {
+            --teal-primary: #20B2AA;
+            --teal-dark: #178F88;
+            --teal-light: #4ECDC4;
+            --teal-bg: #E8F7F6;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
         }
 
-        .header {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--gray-50);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
             background: white;
-            padding: 20px 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-right: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-260px);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .menu-toggle:hover {
+            background: var(--gray-100);
+        }
+
+        .menu-toggle svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--gray-600);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--teal-primary);
+        }
+
+        .sidebar-logo h1 {
+            font-size: 20px;
+            color: var(--gray-900);
+            font-weight: 700;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: var(--gray-100);
+            color: var(--teal-dark);
+        }
+
+        .nav-item.active {
+            background: var(--teal-bg);
+            color: var(--teal-dark);
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .sidebar-footer {
+            padding: 16px 12px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .user-info-sidebar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--teal-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-email {
+            font-size: 13px;
+            color: var(--gray-900);
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--gray-500);
+            text-transform: uppercase;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        .top-bar {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 16px 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 90;
         }
 
-        .header h1 {
-            color: #667eea;
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title h2 {
             font-size: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            color: var(--gray-900);
+            font-weight: 700;
         }
 
-        .header-actions {
+        .top-bar-actions {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
         }
 
-        .user-info {
-            color: #666;
-            font-size: 14px;
+        .view-toggle {
+            display: flex;
+            background: var(--gray-100);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .view-toggle button {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: var(--gray-600);
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .view-toggle button.active {
+            background: white;
+            color: var(--teal-dark);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .btn {
@@ -56,70 +278,105 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--teal-primary);
             color: white;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: var(--teal-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(32, 178, 170, 0.3);
         }
 
         .btn-secondary {
             background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
+            color: var(--teal-dark);
+            border: 2px solid var(--teal-primary);
         }
 
         .btn-secondary:hover {
-            background: #667eea;
-            color: white;
+            background: var(--teal-bg);
         }
 
         .btn-danger {
-            background: #ff4444;
+            background: #EF4444;
             color: white;
         }
 
         .btn-danger:hover {
-            background: #cc0000;
+            background: #DC2626;
         }
 
-        .container {
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        /* CONTENT AREA */
+        .content {
+            padding: 32px;
             max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px;
+            width: 100%;
         }
 
-        .dashboard-grid {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
         }
 
-        .stats-card {
+        .stat-card {
             background: white;
-            padding: 25px;
+            padding: 24px;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
-        .stats-card h3 {
-            color: #666;
-            font-size: 14px;
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--teal-bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--teal-primary);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .stat-details h3 {
+            font-size: 13px;
+            color: var(--gray-500);
             font-weight: 600;
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 4px;
         }
 
-        .stats-card .number {
-            font-size: 36px;
+        .stat-details .number {
+            font-size: 28px;
+            color: var(--gray-900);
             font-weight: 700;
-            color: #667eea;
         }
 
         .section-header {
@@ -129,66 +386,76 @@
             margin-bottom: 20px;
         }
 
-        .section-header h2 {
-            color: #333;
-            font-size: 22px;
+        .section-header h3 {
+            font-size: 18px;
+            color: var(--gray-900);
+            font-weight: 600;
         }
 
-        .studios-list {
+        .studios-container {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid var(--gray-200);
             overflow: hidden;
         }
 
         .studio-item {
-            padding: 20px 25px;
-            border-bottom: 1px solid #f0f0f0;
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 20px;
-            align-items: center;
+            padding: 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 24px;
             transition: background 0.2s ease;
         }
 
         .studio-item:hover {
-            background: #f8f9fa;
+            background: var(--gray-50);
         }
 
         .studio-item:last-child {
             border-bottom: none;
         }
 
-        .studio-info h3 {
-            color: #333;
+        .studio-main {
+            flex: 1;
+        }
+
+        .studio-name {
             font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-900);
             margin-bottom: 8px;
         }
 
-        .studio-details {
+        .studio-meta {
             display: flex;
-            gap: 20px;
             flex-wrap: wrap;
-            color: #666;
+            gap: 16px;
+            color: var(--gray-600);
             font-size: 14px;
         }
 
-        .studio-detail {
+        .studio-meta-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+        }
+
+        .studio-meta-item svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--gray-400);
+            fill: none;
+            stroke-width: 2;
         }
 
         .studio-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .btn-small {
-            padding: 8px 16px;
-            font-size: 13px;
-        }
-
+        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -200,6 +467,7 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
         .modal.show {
@@ -208,90 +476,309 @@
 
         .modal-content {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 85vh;
+            overflow: hidden;
         }
 
         .modal-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--gray-200);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
         }
 
         .modal-header h2 {
-            color: #333;
-            font-size: 22px;
+            font-size: 20px;
+            color: var(--gray-900);
+            font-weight: 700;
         }
 
         .close-btn {
             background: none;
             border: none;
-            font-size: 28px;
-            color: #999;
+            font-size: 24px;
+            color: var(--gray-400);
             cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
 
         .close-btn:hover {
-            color: #333;
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .modal-body {
+            padding: 32px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            max-height: calc(85vh - 160px);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--teal-primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .form-grid.full {
+            grid-template-columns: 1fr;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .form-group label {
             display: block;
-            color: #333;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
+            color: var(--gray-700);
+            margin-bottom: 6px;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e8ed;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-300);
             border-radius: 8px;
-            font-size: 15px;
+            font-size: 14px;
             font-family: inherit;
+            transition: all 0.2s ease;
         }
 
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--teal-primary);
+            box-shadow: 0 0 0 3px var(--teal-bg);
         }
 
         .form-group textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 80px;
+        }
+
+        /* Rich Text Editor */
+        .rich-text-editor {
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .rich-text-editor:focus-within {
+            border-color: var(--teal-primary);
+            box-shadow: 0 0 0 3px var(--teal-bg);
+        }
+
+        .editor-toolbar {
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-300);
+            padding: 8px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .editor-btn {
+            background: white;
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-700);
+            transition: all 0.2s ease;
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .editor-btn:hover {
+            background: var(--gray-100);
+            border-color: var(--teal-primary);
+        }
+
+        .editor-btn.active {
+            background: var(--teal-primary);
+            color: white;
+            border-color: var(--teal-primary);
+        }
+
+        .editor-content {
+            min-height: 80px;
+            padding: 10px 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            outline: none;
+            background: white;
+        }
+
+        .editor-content:empty:before {
+            content: attr(data-placeholder);
+            color: var(--gray-400);
+        }
+
+        .editor-content b,
+        .editor-content strong {
+            font-weight: 700;
+        }
+
+        .editor-content i,
+        .editor-content em {
+            font-style: italic;
+        }
+
+        .editor-content u {
+            text-decoration: underline;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .multi-entry-section {
+            background: var(--gray-50);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .multi-entry-item {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .multi-entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .multi-entry-header h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .btn-remove {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-remove:hover {
+            color: #EF4444;
+            background: #FEE2E2;
+        }
+
+        .btn-add-more {
+            width: 100%;
+            padding: 10px;
+            background: white;
+            border: 2px dashed var(--gray-300);
+            border-radius: 8px;
+            color: var(--teal-dark);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-add-more:hover {
+            border-color: var(--teal-primary);
+            background: var(--teal-bg);
+        }
+
+        .modal-footer {
+            padding: 24px 32px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--gray-400);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            stroke: var(--gray-300);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .empty-state h3 {
+            color: var(--gray-600);
+            font-size: 18px;
+            margin-bottom: 8px;
         }
 
         .loading {
             text-align: center;
-            padding: 40px;
-            color: #999;
+            padding: 60px;
         }
 
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--teal-primary);
             border-radius: 50%;
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            margin: 0 auto 16px;
         }
 
         @keyframes spin {
@@ -299,131 +786,373 @@
             100% { transform: rotate(360deg); }
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-260px);
+            }
 
-        .empty-state svg {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            opacity: 0.3;
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
+            .top-bar {
+                padding: 12px 16px;
             }
 
-            .header-actions {
-                width: 100%;
-                flex-direction: column;
+            .content {
+                padding: 16px;
             }
 
             .studio-item {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
 
             .studio-actions {
-                justify-content: flex-start;
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🎵 Studio Directory Admin</h1>
-        <div class="header-actions">
-            <span class="user-info" id="userEmail">Loading...</span>
-            <button class="btn btn-secondary" onclick="logout()">Sign Out</button>
-        </div>
-    </div>
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <div class="container">
-        <div class="dashboard-grid">
-            <div class="stats-card">
-                <h3>Total Studios</h3>
-                <div class="number" id="totalStudios">0</div>
-            </div>
-            <div class="stats-card">
-                <h3>States Covered</h3>
-                <div class="number" id="totalStates">0</div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <h1>Studio Directory</h1>
             </div>
         </div>
 
-        <div class="section-header">
-            <h2>All Studios</h2>
-            <button class="btn btn-primary" onclick="showAddModal()">+ Add Studio</button>
-        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                Studio Info
+            </a>
+            <!-- More nav items will go here -->
+        </nav>
 
-        <div id="studiosContainer">
-            <div class="loading">
-                <div class="spinner"></div>
-                Loading studios...
+        <div class="sidebar-footer">
+            <div class="user-info-sidebar">
+                <div class="user-avatar" id="userAvatar">S</div>
+                <div class="user-details">
+                    <div class="user-email" id="userEmailSidebar">Loading...</div>
+                    <div class="user-role">Admin</div>
+                </div>
+            </div>
+            <button class="btn btn-secondary btn-small" onclick="logout()" style="width: 100%;">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="top-bar">
+            <div class="page-title">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h2>Studio Info</h2>
+            </div>
+            <div class="top-bar-actions">
+                <div class="view-toggle">
+                    <button class="active" onclick="switchView('admin')">Admin View</button>
+                    <button onclick="switchView('employee')">Employee View</button>
+                </div>
+                <button class="btn btn-primary" onclick="showAddModal()" id="addStudioBtn">
+                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add Studio
+                </button>
             </div>
         </div>
-    </div>
 
-    <!-- Add/Edit Studio Modal -->
+        <div class="content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Total Studios</h3>
+                        <div class="number" id="totalStudios">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-details">
+                        <h3>States Covered</h3>
+                        <div class="number" id="totalStates">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h3>All Studios</h3>
+            </div>
+
+            <div id="studiosContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading studios...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ADD/EDIT STUDIO MODAL -->
     <div id="studioModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">Add Studio</h2>
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
+            
             <form id="studioForm">
-                <input type="hidden" id="studioId">
-                <div class="form-group">
-                    <label for="studioName">Studio Name *</label>
-                    <input type="text" id="studioName" required>
+                <div class="modal-body">
+                    <input type="hidden" id="studioId">
+
+                    <!-- BASIC INFO -->
+                    <div class="form-section">
+                        <div class="form-section-title">Basic Information</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Studio Name *</label>
+                                <input type="text" id="studioName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Studio Director</label>
+                                <input type="text" id="director">
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Address *</label>
+                                <input type="text" id="address" required>
+                            </div>
+                            <div class="form-group">
+                                <label>City *</label>
+                                <input type="text" id="city" required>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>State *</label>
+                                <input type="text" id="state" required placeholder="e.g., Utah, UT">
+                            </div>
+                            <div class="form-group">
+                                <label>ZIP Code *</label>
+                                <input type="text" id="zip" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONTACT -->
+                    <div class="form-section">
+                        <div class="form-section-title">Contact Information</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Phone *</label>
+                                <input type="tel" id="phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email *</label>
+                                <input type="email" id="email" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PRICING -->
+                    <div class="form-section">
+                        <div class="form-section-title">Pricing</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Annual Fee</label>
+                                <input type="text" id="annualFee">
+                            </div>
+                            <div class="form-group">
+                                <label>30-Minute Lesson Price</label>
+                                <input type="text" id="price30min">
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>45-Minute Lesson Price</label>
+                                <input type="text" id="price45min">
+                            </div>
+                            <div class="form-group">
+                                <label>60-Minute Lesson Price</label>
+                                <input type="text" id="price60min">
+                            </div>
+                        </div>
+                        <div class="form-grid full">
+                            <div class="form-group">
+                                <label>New Student Materials</label>
+                                <div class="rich-text-editor">
+                                    <div class="editor-toolbar">
+                                        <button type="button" class="editor-btn" onclick="formatText('bold', 'newStudentMaterials')" title="Bold"><b>B</b></button>
+                                        <button type="button" class="editor-btn" onclick="formatText('italic', 'newStudentMaterials')" title="Italic"><i>I</i></button>
+                                        <button type="button" class="editor-btn" onclick="formatText('underline', 'newStudentMaterials')" title="Underline"><u>U</u></button>
+                                    </div>
+                                    <div class="editor-content" id="newStudentMaterials" contenteditable="true" data-placeholder="Describe materials, requirements, etc."></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Previous Pricing -->
+                        <div class="multi-entry-section">
+                            <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Previous Pricing History</h4>
+                            <div id="previousPricingList"></div>
+                            <button type="button" class="btn-add-more" onclick="addPreviousPricing()">+ Add Previous Pricing</button>
+                        </div>
+                    </div>
+
+                    <!-- PROGRAMS -->
+                    <div class="form-section">
+                        <div class="form-section-title">Programs</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="checkbox-group">
+                                    <input type="checkbox" id="juniorsProgram" onchange="toggleField('juniorsLink')">
+                                    Juniors Program
+                                </label>
+                                <input type="url" id="juniorsLink" placeholder="Program link" style="margin-top: 8px; display: none;">
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-group">
+                                    <input type="checkbox" id="otherPrograms" onchange="toggleField('otherProgramsLink')">
+                                    Other Programs
+                                </label>
+                                <input type="url" id="otherProgramsLink" placeholder="Program link" style="margin-top: 8px; display: none;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RENTALS -->
+                    <div class="form-section">
+                        <div class="form-section-title">Instrument Rentals</div>
+                        <div class="form-group">
+                            <label class="checkbox-group">
+                                <input type="checkbox" id="rentalsOffered" onchange="toggleField('rentalsLink')">
+                                Instrument Rentals Offered
+                            </label>
+                            <input type="url" id="rentalsLink" placeholder="Rental information link" style="margin-top: 8px; display: none;">
+                        </div>
+                    </div>
+
+                    <!-- CUSTOM LINKS -->
+                    <div class="form-section">
+                        <div class="form-section-title">Custom Links</div>
+                        <div class="multi-entry-section">
+                            <div id="customLinksList"></div>
+                            <button type="button" class="btn-add-more" onclick="addCustomLink()">+ Add Link</button>
+                        </div>
+                    </div>
+
+                    <!-- STUDIO ADMINS -->
+                    <div class="form-section">
+                        <div class="form-section-title">Studio Admins</div>
+                        <div class="multi-entry-section">
+                            <div id="studioAdminsList"></div>
+                            <button type="button" class="btn-add-more" onclick="addStudioAdmin()">+ Add Admin</button>
+                        </div>
+                    </div>
+
+                    <!-- ADDITIONAL DETAILS -->
+                    <div class="form-section">
+                        <div class="form-section-title">Additional Details</div>
+                        <div class="form-grid full">
+                            <div class="form-group">
+                                <label>Parking Information</label>
+                                <div class="rich-text-editor">
+                                    <div class="editor-toolbar">
+                                        <button type="button" class="editor-btn" onclick="formatText('bold', 'parking')" title="Bold"><b>B</b></button>
+                                        <button type="button" class="editor-btn" onclick="formatText('italic', 'parking')" title="Italic"><i>I</i></button>
+                                        <button type="button" class="editor-btn" onclick="formatText('underline', 'parking')" title="Underline"><u>U</u></button>
+                                    </div>
+                                    <div class="editor-content" id="parking" contenteditable="true" data-placeholder="Describe parking availability, instructions, etc."></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Landmarks</label>
+                                <div class="rich-text-editor">
+                                    <div class="editor-toolbar">
+                                        <button type="button" class="editor-btn" onclick="formatText('bold', 'landmarks')" title="Bold"><b>B</b></button>
+                                        <button type="button" class="editor-btn" onclick="formatText('italic', 'landmarks')" title="Italic"><i>I</i></button>
+                                        <button type="button" class="editor-btn" onclick="formatText('underline', 'landmarks')" title="Underline"><u>U</u></button>
+                                    </div>
+                                    <div class="editor-content" id="landmarks" contenteditable="true" data-placeholder="Nearby landmarks or directions"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Age Requirements</label>
+                                <div class="rich-text-editor">
+                                    <div class="editor-toolbar">
+                                        <button type="button" class="editor-btn" onclick="formatText('bold', 'ageRequirements')" title="Bold"><b>B</b></button>
+                                        <button type="button" class="editor-btn" onclick="formatText('italic', 'ageRequirements')" title="Italic"><i>I</i></button>
+                                        <button type="button" class="editor-btn" onclick="formatText('underline', 'ageRequirements')" title="Underline"><u>U</u></button>
+                                    </div>
+                                    <div class="editor-content" id="ageRequirements" contenteditable="true" data-placeholder="Any age restrictions or requirements"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Studio Notes</label>
+                                <div class="rich-text-editor">
+                                    <div class="editor-toolbar">
+                                        <button type="button" class="editor-btn" onclick="formatText('bold', 'studioNotes')" title="Bold"><b>B</b></button>
+                                        <button type="button" class="editor-btn" onclick="formatText('italic', 'studioNotes')" title="Italic"><i>I</i></button>
+                                        <button type="button" class="editor-btn" onclick="formatText('underline', 'studioNotes')" title="Underline"><u>U</u></button>
+                                    </div>
+                                    <div class="editor-content" id="studioNotes" contenteditable="true" data-placeholder="Additional notes or information"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="address">Address *</label>
-                    <input type="text" id="address" required>
-                </div>
-                <div class="form-group">
-                    <label for="city">City *</label>
-                    <input type="text" id="city" required>
-                </div>
-                <div class="form-group">
-                    <label for="state">State *</label>
-                    <select id="state" required>
-                        <option value="">Select State</option>
-                        <option value="AL">Alabama</option>
-                        <option value="AZ">Arizona</option>
-                        <option value="CA">California</option>
-                        <option value="CO">Colorado</option>
-                        <option value="FL">Florida</option>
-                        <option value="GA">Georgia</option>
-                        <option value="IL">Illinois</option>
-                        <option value="NC">North Carolina</option>
-                        <option value="TX">Texas</option>
-                        <option value="UT">Utah</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="zip">ZIP Code *</label>
-                    <input type="text" id="zip" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone *</label>
-                    <input type="tel" id="phone" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="director">Studio Director</label>
-                    <input type="text" id="director">
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 30px;">
-                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Studio</button>
+
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Studio</button>
                 </div>
             </form>
         </div>
@@ -435,12 +1164,15 @@
         const SUPABASE_URL = 'https://trmopsmshuoelxbzvnyx.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRybW9wc21zaHVvZWx4Ynp2bnl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1OTk3OTEsImV4cCI6MjA4MTE3NTc5MX0.U1oq80EbFFUPbVa2NQqU6Ezjq-04rDZCDBqJOkUGcMs';
 
-        // Initialize Supabase
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentEditId = null;
+        let currentView = 'admin';
+        let previousPricingCount = 0;
+        let customLinksCount = 0;
+        let studioAdminsCount = 0;
 
-        // Check authentication and role
+        // Check auth
         checkAuth();
 
         async function checkAuth() {
@@ -451,8 +1183,7 @@
                 return;
             }
 
-            // Check if user is admin
-            const { data: profile, error } = await supabase
+            const { data: profile } = await supabase
                 .from('profiles')
                 .select('role')
                 .eq('id', session.user.id)
@@ -464,10 +1195,11 @@
                 return;
             }
 
-            // Display user email
-            document.getElementById('userEmail').textContent = session.user.email;
+            // Set user info
+            const email = session.user.email;
+            document.getElementById('userEmailSidebar').textContent = email;
+            document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase();
 
-            // Load studios
             loadStudios();
         }
 
@@ -490,9 +1222,9 @@
                 // Display studios
                 if (studios.length === 0) {
                     container.innerHTML = `
-                        <div class="studios-list">
+                        <div class="studios-container">
                             <div class="empty-state">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg viewBox="0 0 24 24">
                                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                                 </svg>
@@ -503,43 +1235,90 @@
                     `;
                 } else {
                     container.innerHTML = `
-                        <div class="studios-list">
+                        <div class="studios-container">
                             ${studios.map(studio => `
                                 <div class="studio-item">
-                                    <div class="studio-info">
-                                        <h3>${studio.name}</h3>
-                                        <div class="studio-details">
-                                            <div class="studio-detail">
-                                                📍 ${studio.city}, ${studio.state}
+                                    <div class="studio-main">
+                                        <div class="studio-name">${studio.name}</div>
+                                        <div class="studio-meta">
+                                            <div class="studio-meta-item">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                    <circle cx="12" cy="10" r="3"></circle>
+                                                </svg>
+                                                ${studio.city}, ${studio.state}
                                             </div>
-                                            <div class="studio-detail">
-                                                📞 ${studio.phone}
+                                            <div class="studio-meta-item">
+                                                <svg viewBox="0 0 24 24">
+                                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                                </svg>
+                                                ${studio.phone}
                                             </div>
                                             ${studio.director ? `
-                                                <div class="studio-detail">
-                                                    👤 ${studio.director}
+                                                <div class="studio-meta-item">
+                                                    <svg viewBox="0 0 24 24">
+                                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                        <circle cx="12" cy="7" r="4"></circle>
+                                                    </svg>
+                                                    ${studio.director}
                                                 </div>
                                             ` : ''}
                                         </div>
                                     </div>
-                                    <div class="studio-actions">
-                                        <button class="btn btn-secondary btn-small" onclick="editStudio(${studio.id})">Edit</button>
-                                        <button class="btn btn-danger btn-small" onclick="deleteStudio(${studio.id}, '${studio.name}')">Delete</button>
+                                    <div class="studio-actions" id="actions-${studio.id}">
+                                        <button class="btn btn-secondary btn-small" onclick="editStudio(${studio.id})">
+                                            <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                            Edit
+                                        </button>
+                                        <button class="btn btn-danger btn-small" onclick="deleteStudio(${studio.id}, '${studio.name.replace(/'/g, "\\'")}')">
+                                            <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                            Delete
+                                        </button>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
                     `;
+
+                    // Update view-specific visibility
+                    updateViewVisibility();
                 }
             } catch (error) {
                 console.error('Error loading studios:', error);
                 container.innerHTML = `
-                    <div class="studios-list">
+                    <div class="studios-container">
                         <div class="empty-state">
-                            <p style="color: #ff4444;">Error loading studios. Please refresh the page.</p>
+                            <p style="color: #EF4444;">Error loading studios. Please refresh the page.</p>
                         </div>
                     </div>
                 `;
+            }
+        }
+
+        function switchView(view) {
+            currentView = view;
+            const buttons = document.querySelectorAll('.view-toggle button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            updateViewVisibility();
+        }
+
+        function updateViewVisibility() {
+            const addBtn = document.getElementById('addStudioBtn');
+            const actionDivs = document.querySelectorAll('[id^="actions-"]');
+            
+            if (currentView === 'employee') {
+                addBtn.style.display = 'none';
+                actionDivs.forEach(div => div.style.display = 'none');
+            } else {
+                addBtn.style.display = 'inline-flex';
+                actionDivs.forEach(div => div.style.display = 'flex');
             }
         }
 
@@ -548,6 +1327,27 @@
             document.getElementById('studioForm').reset();
             document.getElementById('studioId').value = '';
             currentEditId = null;
+            
+            // Clear rich text editors
+            document.getElementById('newStudentMaterials').innerHTML = '';
+            document.getElementById('parking').innerHTML = '';
+            document.getElementById('landmarks').innerHTML = '';
+            document.getElementById('ageRequirements').innerHTML = '';
+            document.getElementById('studioNotes').innerHTML = '';
+            
+            // Hide conditional link fields
+            document.getElementById('juniorsLink').style.display = 'none';
+            document.getElementById('otherProgramsLink').style.display = 'none';
+            document.getElementById('rentalsLink').style.display = 'none';
+            
+            // Clear multi-entry sections
+            document.getElementById('previousPricingList').innerHTML = '';
+            document.getElementById('customLinksList').innerHTML = '';
+            document.getElementById('studioAdminsList').innerHTML = '';
+            previousPricingCount = 0;
+            customLinksCount = 0;
+            studioAdminsCount = 0;
+            
             document.getElementById('studioModal').classList.add('show');
         }
 
@@ -560,28 +1360,103 @@
 
             if (error) {
                 alert('Error loading studio');
+                console.error(error);
                 return;
             }
 
+            // Set modal title and ID
             document.getElementById('modalTitle').textContent = 'Edit Studio';
             document.getElementById('studioId').value = studio.id;
-            document.getElementById('studioName').value = studio.name;
-            document.getElementById('address').value = studio.address;
-            document.getElementById('city').value = studio.city;
-            document.getElementById('state').value = studio.state;
-            document.getElementById('zip').value = studio.zip;
-            document.getElementById('phone').value = studio.phone;
-            document.getElementById('email').value = studio.email;
-            document.getElementById('director').value = studio.director || '';
-            
             currentEditId = id;
+
+            // Basic Info
+            document.getElementById('studioName').value = studio.name || '';
+            document.getElementById('director').value = studio.director || '';
+            document.getElementById('address').value = studio.address || '';
+            document.getElementById('city').value = studio.city || '';
+            document.getElementById('state').value = studio.state || '';
+            document.getElementById('zip').value = studio.zip || '';
+
+            // Contact
+            document.getElementById('phone').value = studio.phone || '';
+            document.getElementById('email').value = studio.email || '';
+
+            // Pricing
+            document.getElementById('annualFee').value = studio.annual_fee || '';
+            document.getElementById('price30min').value = studio.price_30min || '';
+            document.getElementById('price45min').value = studio.price_45min || '';
+            document.getElementById('price60min').value = studio.price_60min || '';
+            document.getElementById('newStudentMaterials').innerHTML = studio.new_student_materials || '';
+
+            // Programs
+            document.getElementById('juniorsProgram').checked = studio.juniors_program || false;
+            document.getElementById('juniorsLink').value = studio.juniors_link || '';
+            document.getElementById('juniorsLink').style.display = studio.juniors_program ? 'block' : 'none';
+            
+            document.getElementById('otherPrograms').checked = studio.other_programs || false;
+            document.getElementById('otherProgramsLink').value = studio.other_programs_link || '';
+            document.getElementById('otherProgramsLink').style.display = studio.other_programs ? 'block' : 'none';
+
+            // Rentals
+            document.getElementById('rentalsOffered').checked = studio.rentals_offered || false;
+            document.getElementById('rentalsLink').value = studio.rentals_link || '';
+            document.getElementById('rentalsLink').style.display = studio.rentals_offered ? 'block' : 'none';
+
+            // Additional Details (rich text)
+            document.getElementById('parking').innerHTML = studio.parking || '';
+            document.getElementById('landmarks').innerHTML = studio.landmarks || '';
+            document.getElementById('ageRequirements').innerHTML = studio.age_requirements || '';
+            document.getElementById('studioNotes').innerHTML = studio.studio_notes || '';
+
+            // Load Previous Pricing
+            const previousPricingList = document.getElementById('previousPricingList');
+            previousPricingList.innerHTML = '';
+            previousPricingCount = 0;
+            if (studio.previous_pricing && Array.isArray(studio.previous_pricing)) {
+                studio.previous_pricing.forEach(pricing => {
+                    addPreviousPricing();
+                    const lastItem = previousPricingList.lastElementChild;
+                    lastItem.querySelector('.prev-pricing-month').value = pricing.month || '';
+                    lastItem.querySelector('.prev-pricing-year').value = pricing.year || '';
+                    lastItem.querySelector('.prev-pricing-price').value = pricing.price || '';
+                });
+            }
+
+            // Load Custom Links
+            const customLinksList = document.getElementById('customLinksList');
+            customLinksList.innerHTML = '';
+            customLinksCount = 0;
+            if (studio.custom_links && Array.isArray(studio.custom_links)) {
+                studio.custom_links.forEach(link => {
+                    addCustomLink();
+                    const lastItem = customLinksList.lastElementChild;
+                    lastItem.querySelector('.link-title').value = link.title || '';
+                    lastItem.querySelector('.link-url').value = link.url || '';
+                });
+            }
+
+            // Load Studio Admins
+            const studioAdminsList = document.getElementById('studioAdminsList');
+            studioAdminsList.innerHTML = '';
+            studioAdminsCount = 0;
+            if (studio.studio_admins && Array.isArray(studio.studio_admins)) {
+                studio.studio_admins.forEach(admin => {
+                    addStudioAdmin();
+                    const lastItem = studioAdminsList.lastElementChild;
+                    lastItem.querySelector('.admin-name').value = admin.name || '';
+                    const notesEditor = lastItem.querySelector('.admin-notes');
+                    if (notesEditor) {
+                        notesEditor.innerHTML = admin.notes || '';
+                    }
+                });
+            }
+
+            // Show modal
             document.getElementById('studioModal').classList.add('show');
         }
 
         async function deleteStudio(id, name) {
-            if (!confirm(`Are you sure you want to delete "${name}"?`)) {
-                return;
-            }
+            if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
 
             const { error } = await supabase
                 .from('studios')
@@ -601,10 +1476,142 @@
             document.getElementById('studioModal').classList.remove('show');
         }
 
-        // Handle form submission
+        function toggleField(fieldId) {
+            const field = document.getElementById(fieldId);
+            const checkbox = event.target;
+            field.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
+        // Multi-entry functions
+        function addPreviousPricing() {
+            const list = document.getElementById('previousPricingList');
+            const index = previousPricingCount++;
+            const item = document.createElement('div');
+            item.className = 'multi-entry-item';
+            item.id = `pricing-${index}`;
+            item.innerHTML = `
+                <div class="multi-entry-header">
+                    <h4>Previous Pricing #${index + 1}</h4>
+                    <button type="button" class="btn-remove" onclick="removeEntry('pricing-${index}')">✕</button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Month</label>
+                        <select class="prev-pricing-month">
+                            <option value="">Select Month</option>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Year</label>
+                        <input type="number" class="prev-pricing-year" placeholder="2024">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="text" class="prev-pricing-price" placeholder="$150">
+                </div>
+            `;
+            list.appendChild(item);
+        }
+
+        function addCustomLink() {
+            const list = document.getElementById('customLinksList');
+            const index = customLinksCount++;
+            const item = document.createElement('div');
+            item.className = 'multi-entry-item';
+            item.id = `link-${index}`;
+            item.innerHTML = `
+                <div class="multi-entry-header">
+                    <h4>Link #${index + 1}</h4>
+                    <button type="button" class="btn-remove" onclick="removeEntry('link-${index}')">✕</button>
+                </div>
+                <div class="form-group">
+                    <label>Link Title</label>
+                    <input type="text" class="link-title" placeholder="e.g., Enrollment Form">
+                </div>
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="url" class="link-url" placeholder="https://...">
+                </div>
+            `;
+            list.appendChild(item);
+        }
+
+        function addStudioAdmin() {
+            const list = document.getElementById('studioAdminsList');
+            const index = studioAdminsCount++;
+            const item = document.createElement('div');
+            item.className = 'multi-entry-item';
+            item.id = `admin-${index}`;
+            item.innerHTML = `
+                <div class="multi-entry-header">
+                    <h4>Admin #${index + 1}</h4>
+                    <button type="button" class="btn-remove" onclick="removeEntry('admin-${index}')">✕</button>
+                </div>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="admin-name">
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <div class="rich-text-editor">
+                        <div class="editor-toolbar">
+                            <button type="button" class="editor-btn" onclick="formatText('bold', 'admin-notes-${index}')" title="Bold"><b>B</b></button>
+                            <button type="button" class="editor-btn" onclick="formatText('italic', 'admin-notes-${index}')" title="Italic"><i>I</i></button>
+                            <button type="button" class="editor-btn" onclick="formatText('underline', 'admin-notes-${index}')" title="Underline"><u>U</u></button>
+                        </div>
+                        <div class="editor-content admin-notes" id="admin-notes-${index}" contenteditable="true" data-placeholder="Additional information about this admin"></div>
+                    </div>
+                </div>
+            `;
+            list.appendChild(item);
+        }
+
+        function removeEntry(id) {
+            document.getElementById(id).remove();
+        }
+
+        // Rich Text Editor Functions
+        function formatText(command, editorId) {
+            const editor = document.getElementById(editorId);
+            editor.focus();
+            document.execCommand(command, false, null);
+            event.preventDefault();
+        }
+
+        // Sidebar Toggle
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            // On mobile, toggle 'open' class; on desktop, toggle 'collapsed'
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('show');
+            } else {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+            }
+        }
+
+        // Form submission
         document.getElementById('studioForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            // Collect basic info
             const studioData = {
                 name: document.getElementById('studioName').value,
                 address: document.getElementById('address').value,
@@ -613,8 +1620,65 @@
                 zip: document.getElementById('zip').value,
                 phone: document.getElementById('phone').value,
                 email: document.getElementById('email').value,
-                director: document.getElementById('director').value || null
+                director: document.getElementById('director').value || null,
+                
+                // Pricing
+                annual_fee: document.getElementById('annualFee').value || null,
+                price_30min: document.getElementById('price30min').value || null,
+                price_45min: document.getElementById('price45min').value || null,
+                price_60min: document.getElementById('price60min').value || null,
+                new_student_materials: document.getElementById('newStudentMaterials').innerHTML || null,
+                
+                // Programs
+                juniors_program: document.getElementById('juniorsProgram').checked,
+                juniors_link: document.getElementById('juniorsProgram').checked ? document.getElementById('juniorsLink').value : null,
+                other_programs: document.getElementById('otherPrograms').checked,
+                other_programs_link: document.getElementById('otherPrograms').checked ? document.getElementById('otherProgramsLink').value : null,
+                
+                // Rentals
+                rentals_offered: document.getElementById('rentalsOffered').checked,
+                rentals_link: document.getElementById('rentalsOffered').checked ? document.getElementById('rentalsLink').value : null,
+                
+                // Additional Details (rich text)
+                parking: document.getElementById('parking').innerHTML || null,
+                landmarks: document.getElementById('landmarks').innerHTML || null,
+                age_requirements: document.getElementById('ageRequirements').innerHTML || null,
+                studio_notes: document.getElementById('studioNotes').innerHTML || null
             };
+
+            // Collect Previous Pricing entries
+            const previousPricing = [];
+            document.querySelectorAll('#previousPricingList .multi-entry-item').forEach(item => {
+                const month = item.querySelector('.prev-pricing-month').value;
+                const year = item.querySelector('.prev-pricing-year').value;
+                const price = item.querySelector('.prev-pricing-price').value;
+                if (month || year || price) {
+                    previousPricing.push({ month, year, price });
+                }
+            });
+            studioData.previous_pricing = previousPricing;
+
+            // Collect Custom Links
+            const customLinks = [];
+            document.querySelectorAll('#customLinksList .multi-entry-item').forEach(item => {
+                const title = item.querySelector('.link-title').value;
+                const url = item.querySelector('.link-url').value;
+                if (title || url) {
+                    customLinks.push({ title, url });
+                }
+            });
+            studioData.custom_links = customLinks;
+
+            // Collect Studio Admins
+            const studioAdmins = [];
+            document.querySelectorAll('#studioAdminsList .multi-entry-item').forEach(item => {
+                const name = item.querySelector('.admin-name').value;
+                const notes = item.querySelector('.admin-notes').innerHTML;
+                if (name) {
+                    studioAdmins.push({ name, notes });
+                }
+            });
+            studioData.studio_admins = studioAdmins;
 
             try {
                 if (currentEditId) {
@@ -647,7 +1711,7 @@
             window.location.href = 'login.html';
         }
 
-        // Close modal when clicking outside
+        // Close modal on outside click
         document.getElementById('studioModal').addEventListener('click', (e) => {
             if (e.target.id === 'studioModal') {
                 closeModal();
