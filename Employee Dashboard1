@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Studio Directory — Employee Dashboard</title>
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  
+  :root {
+    --bg: #f8f9fd;
+    --sidebar-bg: #1a1d2e;
+    --sidebar-active: #2d3250;
+    --card-bg: #ffffff;
+    --text-dark: #1a1d2e;
+    --text-light: #64748b;
+    --text-white: #ffffff;
+    --teal: #4fc3c7;
+    --teal-light: #6dd5d9;
+    --purple: #9b87f5;
+    --purple-light: #b5a3ff;
+    --blue: #5b9cff;
+    --blue-light: #7eb3ff;
+    --pink: #ff7eb9;
+    --pink-light: #ffa3d0;
+    --orange: #ffab73;
+    --orange-light: #ffc499;
+    --green: #6fdc8c;
+    --border: #e2e8f0;
+    --shadow: 0 4px 20px rgba(26, 29, 46, 0.06);
+    --shadow-lg: 0 10px 40px rgba(26, 29, 46, 0.1);
+    --radius: 16px;
+    --radius-sm: 12px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    line-height: 1.6;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    background: var(--sidebar-bg);
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.collapsed {
+    transform: translateX(-280px);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--teal), var(--purple));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  .logo-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+
+  .logo-text {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-white);
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .nav-item:hover {
+    background: var(--sidebar-active);
+    color: var(--text-white);
+  }
+
+  .nav-item.active {
+    background: var(--sidebar-active);
+    color: var(--text-white);
+  }
+
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+  }
+
+  .user-profile {
+    margin-top: auto;
+    padding: 16px;
+    background: var(--sidebar-active);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .user-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .user-name {
+    font-weight: 600;
+    color: var(--text-white);
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .user-role {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .btn-logout {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-logout:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .btn-logout svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+  }
+
+  .sidebar-overlay.show {
+    display: block;
+  }
+
+  .main-content {
+    margin-left: 280px;
+    padding: 32px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+  }
+
+  .main-content.expanded {
+    margin-left: 0;
+  }
+
+  .header {
+    margin-bottom: 32px;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .page-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .menu-toggle {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .menu-toggle:hover {
+    border-color: var(--teal);
+    background: rgba(79, 195, 199, 0.1);
+  }
+
+  .menu-toggle svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--text-dark);
+    fill: none;
+    stroke-width: 2.5;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-secondary {
+    background: white;
+    color: var(--text-dark);
+    border: 2px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+
+  .search-bar {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 16px 24px 16px 52px;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    font-size: 15px;
+    background: white;
+    transition: all 0.2s;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 4px rgba(79, 195, 199, 0.1);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    width: 20px;
+    height: 20px;
+  }
+
+  .filter-section {
+    background: white;
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 32px;
+  }
+
+  .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .filter-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-select {
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dark);
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 4px rgba(79, 195, 199, 0.1);
+  }
+
+  .filter-select:hover {
+    border-color: var(--teal);
+  }
+
+  .results-count {
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-light);
+  }
+
+  .results-count strong {
+    color: var(--teal);
+    font-weight: 700;
+  }
+
+  .city-pills-section {
+    background: white;
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 32px;
+    animation: slideDown 0.3s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .city-pills-header {
+    margin-bottom: 16px;
+  }
+
+  .pills-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .city-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .city-pill {
+    padding: 12px 20px;
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .city-pill::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 0;
+  }
+
+  .city-pill span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .city-pill:hover {
+    border-color: var(--teal);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 195, 199, 0.2);
+  }
+
+  .city-pill:hover::before {
+    opacity: 0.1;
+  }
+
+  .city-pill.active {
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(79, 195, 199, 0.3);
+  }
+
+  .city-pill.active::before {
+    opacity: 1;
+  }
+
+  .city-pill-count {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .city-pill.active .city-pill-count {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .studios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .studio-card {
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .studio-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .studio-header {
+    padding: 24px;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .studio-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+
+  .studio-card:nth-child(6n+1) .studio-header {
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+  }
+
+  .studio-card:nth-child(6n+2) .studio-header {
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+  }
+
+  .studio-card:nth-child(6n+3) .studio-header {
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+  }
+
+  .studio-card:nth-child(6n+4) .studio-header {
+    background: linear-gradient(135deg, var(--pink), var(--orange));
+  }
+
+  .studio-card:nth-child(6n+5) .studio-header {
+    background: linear-gradient(135deg, var(--orange), var(--pink));
+  }
+
+  .studio-card:nth-child(6n+6) .studio-header {
+    background: linear-gradient(135deg, var(--teal), var(--green));
+  }
+
+  .studio-name {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .studio-location {
+    font-size: 14px;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+  }
+
+  .studio-body {
+    padding: 24px;
+  }
+
+  .studio-info {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .info-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, rgba(79, 195, 199, 0.1), rgba(91, 156, 255, 0.1));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--teal);
+    flex-shrink: 0;
+  }
+
+  .info-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .info-content {
+    flex: 1;
+  }
+
+  .info-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  .info-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  .studio-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .tag {
+    padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(79, 195, 199, 0.1), rgba(91, 156, 255, 0.1));
+    color: var(--teal);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .studio-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-small {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+  }
+
+  .btn-view {
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    color: white;
+  }
+
+  .btn-view:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(79, 195, 199, 0.3);
+  }
+
+  .btn-info {
+    background: rgba(100, 116, 139, 0.1);
+    color: var(--text-dark);
+  }
+
+  .btn-info:hover {
+    background: rgba(100, 116, 139, 0.2);
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(26, 29, 46, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal.active {
+    display: flex;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 20px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(26, 29, 46, 0.3);
+    animation: modalSlideIn 0.3s ease;
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .modal-header {
+    padding: 32px;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    color: white;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+  }
+
+  .modal-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .modal-subtitle {
+    font-size: 16px;
+    opacity: 0.9;
+  }
+
+  .modal-body {
+    padding: 32px;
+  }
+
+  .detail-section {
+    margin-bottom: 32px;
+  }
+
+  .detail-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .section-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+  }
+
+  .detail-item {
+    padding: 16px;
+    background: var(--bg);
+    border-radius: 12px;
+  }
+
+  .detail-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .detail-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    word-wrap: break-word;
+  }
+
+  .pricing-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  .pricing-card {
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(79, 195, 199, 0.1), rgba(91, 156, 255, 0.1));
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .pricing-duration {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 8px;
+  }
+
+  .pricing-amount {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--teal);
+  }
+
+  .detail-text {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-dark);
+  }
+
+  .badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .badge {
+    padding: 8px 16px;
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  .link-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .link-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 195, 199, 0.3);
+  }
+
+  .link-button svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+  }
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    opacity: 0.3;
+    color: var(--text-light);
+  }
+
+  .empty-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+  }
+
+  .empty-text {
+    font-size: 14px;
+    color: var(--text-light);
+  }
+
+  .loading {
+    text-align: center;
+    padding: 80px 20px;
+  }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    border: 4px solid var(--border);
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 1024px) {
+    .sidebar {
+      transform: translateX(-280px);
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    }
+
+    .main-content {
+      margin-left: 0;
+    }
+
+    .studios-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .main-content {
+      padding: 16px;
+    }
+
+    .page-title {
+      font-size: 24px;
+    }
+
+    .studios-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .filter-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay"></div>
+
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+        </svg>
+      </div>
+      <div class="logo-text">Studios</div>
+    </div>
+
+    <nav class="nav">
+      <a href="#" class="nav-item active">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span>Directory</span>
+      </a>
+    </nav>
+
+    <div class="user-profile">
+      <div class="user-avatar" id="userAvatar">U</div>
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role">Employee</div>
+      </div>
+    </div>
+
+    <button class="btn-logout" onclick="logout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+      </svg>
+      Sign Out
+    </button>
+  </aside>
+
+  <main class="main-content">
+    <div class="header">
+      <div class="header-top">
+        <h1 class="page-title">
+          <button class="menu-toggle" onclick="toggleSidebar()">
+            <svg viewBox="0 0 24 24">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          Studio Directory
+        </h1>
+      </div>
+
+      <div class="search-bar">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input type="text" class="search-input" placeholder="Search by studio name, city, or state..." id="searchInput" />
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label class="filter-label">State</label>
+          <select class="filter-select" id="stateFilter">
+            <option value="">All States</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">City</label>
+          <select class="filter-select" id="cityFilter">
+            <option value="">All Cities</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <button class="btn btn-secondary" id="resetFilters" style="margin-top: 24px; width: 100%;">Reset Filters</button>
+        </div>
+      </div>
+
+      <div class="results-count">
+        Showing <strong id="resultsCount">0</strong> studios
+      </div>
+    </div>
+
+    <div class="city-pills-section" id="cityPillsSection" style="display: none;">
+      <div class="city-pills-header">
+        <span class="pills-label">Select a city:</span>
+      </div>
+      <div class="city-pills" id="cityPills"></div>
+    </div>
+
+    <div class="studios-grid" id="studiosGrid">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading studios...</p>
+      </div>
+    </div>
+
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      <div class="empty-title">No studios found</div>
+      <div class="empty-text">Try adjusting your search or filters</div>
+    </div>
+
+  </main>
+
+  <div class="modal" id="detailModal">
+    <div class="modal-content">
+      <div class="modal-header" id="modalHeader">
+        <button class="modal-close" onclick="closeModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <h2 class="modal-title" id="modalTitle">Studio Name</h2>
+        <div class="modal-subtitle" id="modalSubtitle">Location</div>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://trmopsmshuoelxbzvnyx.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRybW9wc21zaHVvZWx4Ynp2bnl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1OTk3OTEsImV4cCI6MjA4MTE3NTc5MX0.U1oq80EbFFUPbVa2NQqU6Ezjq-04rDZCDBqJOkUGcMs';
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let allStudios = [];
+    let filteredStudios = [];
+    let currentStudio = null;
+
+    checkAuth();
+
+    async function checkAuth() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = 'login.html';
+        return;
+      }
+      const email = session.user.email;
+      document.getElementById('userName').textContent = email.split('@')[0];
+      document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase();
+      loadStudios();
+    }
+
+    async function loadStudios() {
+      try {
+        const { data: studios, error } = await supabase.from('studios').select('*').order('name', { ascending: true });
+        if (error) throw error;
+        allStudios = studios;
+        filteredStudios = studios;
+        const uniqueStates = [...new Set(studios.map(s => s.state))].filter(Boolean).sort();
+        const stateFilter = document.getElementById('stateFilter');
+        stateFilter.innerHTML = '<option value="">All States</option>';
+        uniqueStates.forEach(state => {
+          const option = document.createElement('option');
+          option.value = state;
+          option.textContent = state;
+          stateFilter.appendChild(option);
+        });
+        updateCityDropdown();
+        displayStudios();
+        updateResultsCount();
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('studiosGrid').innerHTML = '<div class="empty-state"><p style="color: #EF4444;">Error: ' + error.message + '</p></div>';
+      }
+    }
+
+    function displayStudios() {
+      const grid = document.getElementById('studiosGrid');
+      const emptyState = document.getElementById('emptyState');
+      if (filteredStudios.length === 0) {
+        grid.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+      grid.style.display = 'grid';
+      emptyState.style.display = 'none';
+      grid.innerHTML = filteredStudios.map(studio => `
+        <div class="studio-card" onclick="openModal('${studio.id}')">
+          <div class="studio-header">
+            <div class="studio-name">${studio.name}</div>
+            <div class="studio-location">${studio.city}, ${studio.state}</div>
+          </div>
+          <div class="studio-body">
+            <div class="studio-info">
+              <div class="info-row">
+                <div class="info-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </div>
+                <div class="info-content">
+                  <div class="info-label">Address</div>
+                  <div class="info-value">${studio.address || 'N/A'}</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                  </svg>
+                </div>
+                <div class="info-content">
+                  <div class="info-label">Phone</div>
+                  <div class="info-value">${studio.phone || 'N/A'}</div>
+                </div>
+              </div>
+              ${studio.director ? `
+              <div class="info-row">
+                <div class="info-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <div class="info-content">
+                  <div class="info-label">Director</div>
+                  <div class="info-value">${studio.director}</div>
+                </div>
+              </div>
+              ` : ''}
+            </div>
+            ${getTagsHtml(studio)}
+            <div class="studio-actions">
+              <button class="btn-small btn-view" onclick="event.stopPropagation(); openModal('${studio.id}');">View Details</button>
+              <button class="btn-small btn-info" onclick="event.stopPropagation(); copyStudioInfo('${studio.id}');">Quick Copy</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getTagsHtml(studio) {
+      const tags = [];
+      if (studio.juniors_program) tags.push('Juniors Program');
+      if (studio.other_programs) tags.push('Other Programs');
+      if (studio.rentals_offered) tags.push('Rentals');
+      if (tags.length === 0) return '';
+      return `<div class="studio-tags">${tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`;
+    }
+
+    function openModal(studioId) {
+      const studio = allStudios.find(s => s.id === studioId);
+      if (!studio) return;
+      currentStudio = studio;
+      const modal = document.getElementById('detailModal');
+      document.getElementById('modalTitle').textContent = studio.name;
+      document.getElementById('modalSubtitle').textContent = `${studio.city}, ${studio.state}`;
+      document.getElementById('modalBody').innerHTML = `
+        <div class="detail-section">
+          <div class="section-title">
+            <span class="section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>
+            Essential Information
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">Address</div><div class="detail-value">${studio.address || 'N/A'}</div></div>
+            <div class="detail-item"><div class="detail-label">City, State ZIP</div><div class="detail-value">${studio.city}, ${studio.state} ${studio.zip || ''}</div></div>
+            <div class="detail-item"><div class="detail-label">Phone</div><div class="detail-value">${studio.phone || 'N/A'}</div></div>
+            <div class="detail-item"><div class="detail-label">Email</div><div class="detail-value">${studio.email || 'N/A'}</div></div>
+            ${studio.director ? `<div class="detail-item"><div class="detail-label">Director</div><div class="detail-value">${studio.director}</div></div>` : ''}
+          </div>
+        </div>
+        ${(studio.annual_fee || studio.price_30min || studio.price_45min || studio.price_60min) ? `
+        <div class="detail-section">
+          <div class="section-title"><span class="section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></span>Pricing</div>
+          <div class="pricing-cards">
+            ${studio.annual_fee ? `<div class="pricing-card"><div class="pricing-duration">Annual Fee</div><div class="pricing-amount">${studio.annual_fee}</div></div>` : ''}
+            ${studio.price_30min ? `<div class="pricing-card"><div class="pricing-duration">30 Minutes</div><div class="pricing-amount">${studio.price_30min}</div></div>` : ''}
+            ${studio.price_45min ? `<div class="pricing-card"><div class="pricing-duration">45 Minutes</div><div class="pricing-amount">${studio.price_45min}</div></div>` : ''}
+            ${studio.price_60min ? `<div class="pricing-card"><div class="pricing-duration">60 Minutes</div><div class="pricing-amount">${studio.price_60min}</div></div>` : ''}
+          </div>
+        </div>` : ''}
+        ${studio.new_student_materials ? `<div class="detail-section"><div class="section-title"><span class="section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span>New Student Materials</div><div class="detail-text">${studio.new_student_materials}</div></div>` : ''}
+        ${(studio.juniors_program || studio.other_programs) ? `<div class="detail-section"><div class="section-title"><span class="section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>Programs Available</div><div class="badge-list">${studio.juniors_program ? `<span class="badge">Juniors Program</span>` : ''}${studio.other_programs ? `<span class="badge">Other Programs</span>` : ''}</div>${(studio.juniors_link || studio.other_programs_link) ? `<div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">${studio.juniors_link ? `<a href="${studio.juniors_link}" target="_blank" class="link-button">Juniors Info</a>` : ''}${studio.other_programs_link ? `<a href="${studio.other_programs_link}" target="_blank" class="link-button">Programs Info</a>` : ''}</div>` : ''}</div>` : ''}
+        ${studio.rentals_offered ? `<div class="detail-section"><div class="section-title"><span class="section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></span>Instrument Rentals</div><div class="badge-list"><span class="badge">Rentals Available</span></div>${studio.rentals_link ? `<div style="margin-top: 12px;"><a href="${studio.rentals_link}" target="_blank" class="link-button">Rentals Info</a></div>` : ''}</div>` : ''}
+        ${studio.custom_links && studio.custom_links.length > 0 ? `<div class="detail-section"><div class="section-title"><span class="section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></span>Quick Links</div><div style="display: flex; gap: 8px; flex-wrap: wrap;">${studio.custom_links.map(link => `<a href="${link.url}" target="_blank" class="link-button">${link.title}</a>`).join('')}</div></div>` : ''}
+        ${(studio.parking || studio.landmarks || studio.age_requirements || studio.studio_notes) ? `<div class="detail-section"><div class="section-title"><span class="section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></span>Additional Information</div>${studio.parking ? `<div class="detail-item" style="margin-bottom: 12px;"><div class="detail-label">Parking</div><div class="detail-text">${studio.parking}</div></div>` : ''}${studio.landmarks ? `<div class="detail-item" style="margin-bottom: 12px;"><div class="detail-label">Landmarks</div><div class="detail-text">${studio.landmarks}</div></div>` : ''}${studio.age_requirements ? `<div class="detail-item" style="margin-bottom: 12px;"><div class="detail-label">Age Requirements</div><div class="detail-text">${studio.age_requirements}</div></div>` : ''}${studio.studio_notes ? `<div class="detail-item"><div class="detail-label">Notes</div><div class="detail-text">${studio.studio_notes}</div></div>` : ''}</div>` : ''}
+      `;
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
+
+    function copyStudioInfo(studioId) {
+      const studio = allStudios.find(s => s.id === studioId);
+      if (!studio) return;
+      const info = `${studio.name}\n${studio.address}\n${studio.city}, ${studio.state} ${studio.zip || ''}\nPhone: ${studio.phone}\nEmail: ${studio.email}`;
+      navigator.clipboard.writeText(info).then(() => {
+        alert('Studio info copied to clipboard!');
+      });
+    }
+
+    function updateCityDropdown() {
+      const stateFilter = document.getElementById('stateFilter').value;
+      const citySelect = document.getElementById('cityFilter');
+      let availableCities = allStudios;
+      if (stateFilter) availableCities = availableCities.filter(s => s.state === stateFilter);
+      const cities = [...new Set(availableCities.map(s => s.city))].filter(Boolean).sort();
+      citySelect.innerHTML = '<option value="">All Cities</option>' + cities.map(city => `<option value="${city}">${city}</option>`).join('');
+    }
+
+    function renderCityPills() {
+      const stateFilter = document.getElementById('stateFilter').value;
+      const cityFilter = document.getElementById('cityFilter').value;
+      const pillsSection = document.getElementById('cityPillsSection');
+      const pillsContainer = document.getElementById('cityPills');
+      if (!stateFilter) {
+        pillsSection.style.display = 'none';
+        return;
+      }
+      let availableStudios = allStudios.filter(s => s.state === stateFilter);
+      const cityCounts = {};
+      availableStudios.forEach(studio => {
+        cityCounts[studio.city] = (cityCounts[studio.city] || 0) + 1;
+      });
+      const cities = Object.keys(cityCounts).sort();
+      if (cities.length === 0) {
+        pillsSection.style.display = 'none';
+        return;
+      }
+      pillsSection.style.display = 'block';
+      pillsContainer.innerHTML = cities.map(city => `<button class="city-pill ${cityFilter === city ? 'active' : ''}" onclick="selectCityPill('${city}')"><span>${city}<span class="city-pill-count">${cityCounts[city]}</span></span></button>`).join('');
+    }
+
+    function selectCityPill(city) {
+      const citySelect = document.getElementById('cityFilter');
+      if (citySelect.value === city) {
+        citySelect.value = '';
+      } else {
+        citySelect.value = city;
+      }
+      filterStudios();
+    }
+
+    function filterStudios() {
+      const stateFilter = document.getElementById('stateFilter').value;
+      const cityFilter = document.getElementById('cityFilter').value;
+      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+      filteredStudios = allStudios.filter(studio => {
+        const matchesState = !stateFilter || studio.state === stateFilter;
+        const matchesCity = !cityFilter || studio.city === cityFilter;
+        const matchesSearch = !searchQuery || 
+          (studio.name && studio.name.toLowerCase().includes(searchQuery)) ||
+          (studio.city && studio.city.toLowerCase().includes(searchQuery)) ||
+          (studio.state && studio.state.toLowerCase().includes(searchQuery)) ||
+          (studio.director && studio.director.toLowerCase().includes(searchQuery));
+        return matchesState && matchesCity && matchesSearch;
+      });
+      updateCityDropdown();
+      renderCityPills();
+      updateResultsCount();
+      displayStudios();
+    }
+
+    function updateResultsCount() {
+      document.getElementById('resultsCount').textContent = filteredStudios.length;
+    }
+
+    function clearFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('stateFilter').value = '';
+      document.getElementById('cityFilter').value = '';
+      filterStudios();
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const mainContent = document.querySelector('.main-content');
+      const overlay = document.querySelector('.sidebar-overlay');
+      if (window.innerWidth <= 1024) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      } else {
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+      }
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = 'login.html';
+    }
+
+    document.getElementById('searchInput').addEventListener('input', filterStudios);
+    document.getElementById('stateFilter').addEventListener('change', filterStudios);
+    document.getElementById('cityFilter').addEventListener('change', filterStudios);
+    document.getElementById('resetFilters').addEventListener('click', clearFilters);
+    document.querySelector('.sidebar-overlay').addEventListener('click', function() {
+      if (window.innerWidth <= 1024) toggleSidebar();
+    });
+    document.getElementById('detailModal').addEventListener('click', (e) => {
+      if (e.target.id === 'detailModal') closeModal();
+    });
+  </script>
+
+</body>
+</html>
+```
+
+### Step 4: Paste & Commit
+
+1. **Paste** all that code into the GitHub editor (Ctrl+V)
+2. Scroll to the bottom
+3. Click the green **"Commit new file"** button
+
+### Step 5: Access Your Dashboard
+
+Wait 1-2 minutes, then go to:
+```
+https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/employee-dashboard-v3.html
